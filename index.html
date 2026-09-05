@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Belajar Hewan Seru</title>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;800&family=Bubblegum+Sans&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --yellow: #FFD93D; --orange: #FF6B35; --pink: #FF6B9D;
+            --purple: #A855F7; --blue: #3B82F6; --bg: #FFF8EC;
+            --mamalia: #4ade80; --unggas: #fb923c;
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Nunito', sans-serif; background: var(--bg); overflow-x: hidden; }
+
+        /* --- TAMPILAN AWAL REVISI (LEBIH ELEGAN) --- */
+        #page-intro {
+            height: 100vh; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: linear-gradient(180deg, #ffffff 0%, #f0f9ff 100%);
+            position: relative; text-align: center;
+        }
+
+        .floating-emoji { position: absolute; font-size: 3.5rem; animation: float 6s infinite ease-in-out; opacity: 0.4; pointer-events: none; }
+        @keyframes float { 0%, 100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-40px) rotate(20deg); } }
+
+        .main-card {
+            background: white; padding: 60px 40px; border-radius: 60px;
+            box-shadow: 0 40px 80px rgba(59, 130, 246, 0.12); width: 90%; max-width: 550px;
+            z-index: 10; position: relative; border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .avatar-circle {
+            width: 150px; height: 150px; background: linear-gradient(135deg, var(--yellow), #fcd34d); 
+            border-radius: 50%; margin: 0 auto 30px; display: flex; align-items: center; 
+            justify-content: center; font-size: 90px; border: 8px solid white;
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
+        }
+
+        /* --- HALAMAN KEDUA (GRID HEWAN) --- */
+        #page-animals {
+            display: none; min-height: 100vh; padding: 40px 20px;
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%); flex-direction: column; align-items: center;
+        }
+
+        .animal-grid {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 25px; width: 100%; max-width: 1000px; margin-top: 30px;
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.08); backdrop-filter: blur(12px);
+            border-radius: 35px; padding: 30px 20px; cursor: pointer; transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            border: 1px solid rgba(255,255,255,0.1); text-align: center; position: relative;
+        }
+
+        .card:hover { transform: translateY(-10px); background: rgba(255, 255, 255, 0.15); }
+        .card.active { border-color: var(--yellow); box-shadow: 0 0 30px rgba(255, 217, 61, 0.4); }
+
+        .emoji { font-size: 70px; display: block; margin-bottom: 15px; filter: drop-shadow(0 5px 15px rgba(0,0,0,0.2)); }
+        .name { color: white; font-family: 'Bubblegum Sans'; font-size: 2rem; margin-bottom: 5px; }
+        
+        /* KETERANGAN JENIS */
+        .species-tag {
+            display: inline-block; padding: 5px 15px; border-radius: 20px;
+            font-size: 0.85rem; font-weight: 800; color: white; text-transform: uppercase;
+            letter-spacing: 1px; margin-top: 5px;
+        }
+        .tag-mamalia { background: var(--mamalia); box-shadow: 0 4px 10px rgba(74, 222, 128, 0.3); }
+        .tag-unggas { background: var(--unggas); box-shadow: 0 4px 10px rgba(251, 146, 60, 0.3); }
+
+        /* --- TOMBOL --- */
+        .btn {
+            background: linear-gradient(135deg, var(--orange), var(--pink));
+            color: white; border: none; padding: 18px 45px; border-radius: 50px;
+            font-family: 'Bubblegum Sans'; font-size: 1.6rem; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 10px 25px rgba(255,107,53,0.3);
+        }
+        .btn:hover { transform: scale(1.05); filter: brightness(1.1); }
+
+        /* Visual Animasi Suara */
+        .wave-box { display: none; gap: 4px; height: 25px; justify-content: center; margin-top: 15px; }
+        .card.active .wave-box { display: flex; align-items: flex-end; }
+        .bar { width: 5px; background: var(--yellow); border-radius: 10px; animation: barPulse 0.5s infinite alternate; }
+        @keyframes barPulse { from { height: 5px; } to { height: 25px; } }
+
+        #unlock { position: fixed; inset: 0; background: #1e293b; z-index: 1000; display: flex; align-items: center; justify-content: center; }
+    </style>
+</head>
+<body>
+
+    <div id="unlock">
+        <button class="btn" onclick="startApp()">KLIK UNTUK MULAI 🐾</button>
+    </div>
+
+    <div id="page-intro">
+        <div class="floating-emoji" style="top:15%; left:12%">🐘</div>
+        <div class="floating-emoji" style="top:25%; right:18%; animation-delay: 1.5s">🦁</div>
+        <div class="floating-emoji" style="bottom:20%; left:15%; animation-delay: 3s">🦒</div>
+        <div class="floating-emoji" style="bottom:10%; right:10%; animation-delay: 0.5s">🦓</div>
+        
+        <div class="main-card">
+            <div class="avatar-circle" id="guru">🧒</div>
+            <h1 style="font-family: 'Bubblegum Sans'; font-size: 3rem; color: var(--orange); margin-bottom: 10px; line-height: 1;">Halo Teman-teman!</h1>
+            <p style="color: #64748b; margin-bottom: 35px; font-size: 1.2rem; font-weight: 700;">Ayo kita dengarkan berbagai suara hewan yang lucu!</p>
+            <button class="btn" onclick="showPage('page-animals')">MULAI BELAJAR →</button>
+        </div>
+    </div>
+
+    <div id="page-animals">
+        <div style="width: 100%; max-width: 1000px; display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+            <button class="btn" style="padding: 10px 25px; font-size: 1.1rem;" onclick="showPage('page-intro')">← Kembali</button>
+            <h2 style="color: var(--yellow); font-family: 'Bubblegum Sans'; font-size: 2.2rem; text-shadow: 0 4px 10px rgba(0,0,0,0.3);">Pilih Hewan</h2>
+            <div style="width: 100px;"></div> </div>
+        
+        <div class="animal-grid">
+            <div class="card" onclick="playAnimal('anjing', this)">
+                <span class="emoji">🐕</span>
+                <div class="name">Anjing</div>
+                <div class="species-tag tag-mamalia">Mamalia</div>
+                <div class="wave-box"><div class="bar"></div><div class="bar" style="animation-delay: 0.2s"></div><div class="bar"></div></div>
+                <audio id="audio-anjing" src="anjing.mp3"></audio> 
+            </div>
+
+            <div class="card" onclick="playAnimal('kucing', this)">
+                <span class="emoji">🐈</span>
+                <div class="name">Kucing</div>
+                <div class="species-tag tag-mamalia">Mamalia</div>
+                <div class="wave-box"><div class="bar"></div><div class="bar" style="animation-delay: 0.2s"></div><div class="bar"></div></div>
+                <audio id="audio-kucing" src="kucing.mp3"></audio> 
+            </div>
+
+            <div class="card" onclick="playAnimal('ayam', this)">
+                <span class="emoji">🐓</span>
+                <div class="name">Ayam</div>
+                <div class="species-tag tag-unggas">Unggas</div>
+                <div class="wave-box"><div class="bar"></div><div class="bar" style="animation-delay: 0.2s"></div><div class="bar"></div></div>
+                <audio id="audio-ayam" src="ayam.mp3"></audio> 
+            </div>
+
+            <div class="card" onclick="playAnimal('sapi', this)">
+                <span class="emoji">🐄</span>
+                <div class="name">Sapi</div>
+                <div class="species-tag tag-mamalia">Mamalia</div>
+                <div class="wave-box"><div class="bar"></div><div class="bar" style="animation-delay: 0.2s"></div><div class="bar"></div></div>
+                <audio id="audio-sapi" src="sapi.mp3"></audio> 
+            </div>
+
+            <div class="card" onclick="playAnimal('bebek', this)">
+                <span class="emoji">🦆</span>
+                <div class="name">Bebek</div>
+                <div class="species-tag tag-unggas">Unggas</div>
+                <div class="wave-box"><div class="bar"></div><div class="bar" style="animation-delay: 0.2s"></div><div class="bar"></div></div>
+                <audio id="audio-bebek" src="bebek.mp3"></audio> 
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let audioCtx = null;
+        let masterGain = null;
+
+        function startApp() {
+            document.getElementById('unlock').style.display = 'none';
+            audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+            masterGain = audioCtx.createGain();
+            masterGain.gain.value = 0.12; 
+            masterGain.connect(audioCtx.destination);
+            
+            startLullaby();
+            greetUser();
+        }
+
+        function greetUser() {
+            window.speechSynthesis.cancel();
+            const msg = new SpeechSynthesisUtterance("Halo teman-teman, mari kita belajar mengenal hewan");
+            msg.lang = 'id-ID';
+            window.speechSynthesis.speak(msg);
+        }
+
+        function showPage(pageId) {
+            document.getElementById('page-intro').style.display = 'none';
+            document.getElementById('page-animals').style.display = 'none';
+            document.getElementById(pageId).style.display = 'flex';
+            if(pageId === 'page-intro') greetUser();
+        }
+
+        function stopAll() {
+            window.speechSynthesis.cancel();
+            document.querySelectorAll('audio').forEach(a => { a.pause(); a.currentTime = 0; });
+            document.querySelectorAll('.card').forEach(c => c.classList.remove('active'));
+        }
+
+        function playAnimal(id, el) {
+            stopAll();
+            el.classList.add('active');
+            const sound = document.getElementById('audio-' + id);
+            if(sound) {
+                sound.play();
+                sound.onended = () => el.classList.remove('active');
+            }
+        }
+
+        function startLullaby() {
+            const notes = [523, 659, 783, 659];
+            let i = 0;
+            setInterval(() => {
+                let osc = audioCtx.createOscillator();
+                let g = audioCtx.createGain();
+                osc.type = 'sine';
+                osc.frequency.value = notes[i % notes.length];
+                g.gain.setValueAtTime(0.08, audioCtx.currentTime);
+                g.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + 2.5);
+                osc.connect(g); g.connect(masterGain);
+                osc.start(); osc.stop(audioCtx.currentTime + 2.5);
+                i++;
+            }, 3500);
+        }
+    </script>
+</body>
+</html>
